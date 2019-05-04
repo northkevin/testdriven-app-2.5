@@ -61,10 +61,74 @@ alias myapp-postgres="winpty docker-compose -f docker-compose.yml exec users-db 
 alias myapp-prod-create="docker-machine create --driver amazonec2 testdriven-prod"
 alias myapp-prod-env="docker-machine env testdriven-prod"
 alias myapp-prod-ip="docker-machine ip testdriven-prod"
-alias myapp-prod-build="docker-compose -f docker-compose-prod.yml up -d --build"
+# alias myapp-prod-build="docker-compose -f docker-compose-prod.yml up -d --build"
 alias myapp-prod-test="winpty docker-compose -f docker-compose-prod.yml exec users python manage.py test"
 
 function myapp-prod-connect()
 {
-	eval $(docker-machine env testdriven-prod)
+	docker-machine start testdriven-prod
+	docker-machine regenerate-certs -f testdriven-prod
+	eval "$(docker-machine env --shell bash testdriven-prod)"
+	export SECRET_KEY=$(python init_secrets.py)
+	export DOCKER_MACHINE_STAGING_IP=$(docker-machine ip testdriven-prod)
+	export REACT_APP_USERS_SERVICE_URL="http://$DOCKER_MACHINE_STAGING_IP"
+	echo DOCKER_MACHINE_STAGING_IP=$DOCKER_MACHINE_STAGING_IP
+	echo REACT_APP_USERS_SERVICE_URL=$REACT_APP_USERS_SERVICE_URL
+	python services/swagger/update-spec.py $REACT_APP_USERS_SERVICE_URL
+}
+
+function myapp-prod-build()
+{
+	export SECRET_KEY=$(python init_secrets.py)
+	export DOCKER_MACHINE_STAGING_IP=$(docker-machine ip testdriven-prod)
+	export REACT_APP_USERS_SERVICE_URL="http://$DOCKER_MACHINE_STAGING_IP"
+	echo DOCKER_MACHINE_STAGING_IP=$DOCKER_MACHINE_STAGING_IP
+	echo REACT_APP_USERS_SERVICE_URL=$REACT_APP_USERS_SERVICE_URL
+	python services/swagger/update-spec.py $REACT_APP_USERS_SERVICE_URL
+	docker-compose -f docker-compose-prod.yml build --build -d
+}
+
+function myapp-prod-test()
+{
+	export SECRET_KEY=$(python init_secrets.py)
+	export DOCKER_MACHINE_STAGING_IP=$(docker-machine ip testdriven-prod)
+	export REACT_APP_USERS_SERVICE_URL="http://$DOCKER_MACHINE_STAGING_IP"
+	docker-compose -f docker-compose-prod.yml exec users python manage.py recreate_db
+	docker-compose -f docker-compose-prod.yml exec users python manage.py seed_db
+	docker-compose -f docker-compose-prod.yml exec users python manage.py test
+	docker-compose -f docker-compose-prod.yml exec users flake8 project
+}
+
+function myapp-stage-connect()
+{
+	# figure out how to do a .. if docker-machine testdriven-stage doesn't exist.. create it.. else start it..
+	docker-machine create --driver amazonec2 testdriven-stage
+	docker-machine start testdriven-stage
+	docker-machine regenerate-certs -f testdriven-stage
+	eval "$(docker-machine env --shell bash testdriven-stage)"
+	export DOCKER_MACHINE_STAGING_IP=$(docker-machine ip testdriven-stage)
+	export REACT_APP_USERS_SERVICE_URL="http://$DOCKER_MACHINE_STAGING_IP"
+	echo DOCKER_MACHINE_STAGING_IP=$DOCKER_MACHINE_STAGING_IP
+	echo REACT_APP_USERS_SERVICE_URL=$REACT_APP_USERS_SERVICE_URL
+	python services/swagger/update-spec.py $REACT_APP_USERS_SERVICE_URL
+}
+
+function myapp-stage-init()
+{
+	export DOCKER_MACHINE_STAGING_IP=$(docker-machine ip testdriven-prod)
+	export REACT_APP_USERS_SERVICE_URL="http://$DOCKER_MACHINE_STAGING_IP"
+	echo DOCKER_MACHINE_STAGING_IP=$DOCKER_MACHINE_STAGING_IP
+	echo REACT_APP_USERS_SERVICE_URL=$REACT_APP_USERS_SERVICE_URL
+	python services/swagger/update-spec.py $REACT_APP_USERS_SERVICE_URL
+}
+
+function myapp-stage-test()
+{
+	export DOCKER_MACHINE_STAGING_IP=$(docker-machine ip testdriven-prod)
+	export REACT_APP_USERS_SERVICE_URL="http://$DOCKER_MACHINE_STAGING_IP"
+	docker-compose -f docker-compose-stage.yml exec users python manage.py recreate_db
+	docker-compose -f docker-compose-stage.yml exec users python manage.py seed_db
+	docker-compose -f docker-compose-stage.yml exec users python manage.py test
+	docker-compose -f docker-compose-stage.yml exec users flake8 project
+	# ./node_modules/.bin/cypress open --config baseUrl=http://$DOCKER_MACHINE_STAGING_IP
 }

@@ -3,3 +3,5 @@ env
 htmlcov
 node_modules
 .vscode
+init_secrets.py
+init_secrets.sh
