@@ -2,6 +2,9 @@
 
 # This is added to ~/.bash_profile by adding 'source $microservice_app/.bash_profile_ext.sh'
 
+export REACT_APP_USERS_SERVICE_URL="http://localhost"
+printf "REACT_APP_USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}"
+
 # Docker / Flask testdriven.io commands
 function myapp()
 {
@@ -15,7 +18,7 @@ function myapp-init()
 
 function myapp-m()
 {
-	winpty docker-compose -f docker-compose-dev.yml exec users python manage.py "$@"
+	winpty docker-compose -f docker-compose.yml exec users python manage.py "$@"
 }
 
 # prod stuff
@@ -36,22 +39,23 @@ function myapp-prod-init()
 }
 
 # up / build 
-alias myapp-build="docker-compose -f docker-compose-dev.yml up -d --build"
-alias myapp-build-client="docker-compose -f docker-compose-dev.yml up -d --build client"
-alias myapp-up="docker-compose -f docker-compose-dev.yml up"
-alias myapp-build-force="docker-compose -f docker-compose-dev.yml build --no-cache"
-alias myapp-stop="docker-compose -f docker-compose-dev.yml stop"
-alias myapp-rm="docker-compose -f docker-compose-dev.yml rm"
-alias myapp-logs="docker-compose -f docker-compose-dev.yml logs"
+alias myapp-build="docker-compose -f docker-compose.yml up -d --build"
+alias myapp-build-client="docker-compose -f docker-compose.yml up -d --build client"
+alias myapp-up="docker-compose -f docker-compose.yml up"
+alias myapp-build-force="docker-compose -f docker-compose.yml build --no-cache"
+alias myapp-stop="docker-compose -f docker-compose.yml stop"
+alias myapp-rm="docker-compose -f docker-compose.yml rm"
+alias myapp-logs="docker-compose -f docker-compose.yml logs"
+alias myapp-logs-tail="docker-compose -f docker-compose.yml logs --follow"
 # test
-alias myapp-test="winpty docker-compose -f docker-compose-dev.yml exec users python manage.py test"
-alias myapp-test-client="winpty docker-compose -f docker-compose-dev.yml exec client npm test"
-alias myapp-shell="winpty docker-compose -f docker-compose-dev.yml exec users flask shell"
-alias myapp-flake="winpty docker-compose -f docker-compose-dev.yml exec users flake8 project"
+alias myapp-test="winpty docker-compose -f docker-compose.yml exec users python manage.py test"
+alias myapp-test-client="winpty docker-compose -f docker-compose.yml exec client npm test"
+alias myapp-shell="winpty docker-compose -f docker-compose.yml exec users flask shell"
+alias myapp-flake="winpty docker-compose -f docker-compose.yml exec users flake8 project"
 # shell / db
-alias myapp-recreate-db="winpty docker-compose -f docker-compose-dev.yml exec users python manage.py recreate_db"
-alias myapp-seed-db="winpty docker-compose -f docker-compose-dev.yml exec users python manage.py seed_db"
-alias myapp-postgres="winpty docker-compose -f docker-compose-dev.yml exec users-db psql -U postgres"
+alias myapp-recreate-db="winpty docker-compose -f docker-compose.yml exec users python manage.py recreate_db"
+alias myapp-seed-db="winpty docker-compose -f docker-compose.yml exec users python manage.py seed_db"
+alias myapp-postgres="winpty docker-compose -f docker-compose.yml exec users-db psql -U postgres"
 
 # Docker / Amazon AWS commands
 alias myapp-prod-create="docker-machine create --driver amazonec2 testdriven-prod"
