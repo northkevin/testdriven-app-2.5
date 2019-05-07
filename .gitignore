@@ -5,3 +5,4 @@ node_modules
 .vscode
 init_secrets.py
 init_secrets.sh
+init_stage.sh
