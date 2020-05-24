@@ -1,20 +1,28 @@
 sudo: required
 
+cache:
+  - pip
+  - npm
+
 services:
   - docker
 
 env:
   DOCKER_COMPOSE_VERSION: 1.23.2
   COMMIT: ${TRAVIS_COMMIT::8}
-  MAIN_REPO: https://github.com/northkevin/testdriven-app-2.5
+  MAIN_REPO: https://github.com/northkevin/microservice-app.git
   USERS: test-driven-users
-  USERS_REPO: ${MAIN_REPO}/tree/${TRAVIS_BRANCH}:services/users
+  USERS_REPO: ${MAIN_REPO}#${TRAVIS_BRANCH}:services/users
   USERS_DB: test-driven-users_db
-  USERS_DB_REPO: ${MAIN_REPO}/tree/${TRAVIS_BRANCH}:services/users/project/db
+  USERS_DB_REPO: ${MAIN_REPO}#${TRAVIS_BRANCH}:services/users/project/db
   CLIENT: test-driven-client
-  CLIENT_REPO: ${MAIN_REPO}/tree/${TRAVIS_BRANCH}:services/client
+  CLIENT_REPO: ${MAIN_REPO}#${TRAVIS_BRANCH}:services/client
   SWAGGER: test-driven-swagger
-  SWAGGER_REPO: ${MAIN_REPO}/tree/${TRAVIS_BRANCH}:services/swagger
+  SWAGGER_REPO: ${MAIN_REPO}#${TRAVIS_BRANCH}:services/swagger
+  EXERCISES: test-driven-exercises
+  EXERCISES_REPO: ${MAIN_REPO}#${TRAVIS_BRANCH}:services/exercises
+  EXERCISES_DB: test-driven-exercises_db
+  EXERCISES_DB_REPO: ${MAIN_REPO}#${TRAVIS_BRANCH}:services/exercises/project/db
   SECRET_KEY: my_precious
 
 before_install:
@@ -25,13 +33,17 @@ before_install:
 
 before_script:
   - export REACT_APP_USERS_SERVICE_URL=http://127.0.0.1
+  - export REACT_APP_EXERCISES_SERVICE_URL=http://127.0.0.1
+  - export REACT_APP_API_GATEWAY_URL=https://mceljmlm76.execute-api.us-west-1.amazonaws.com/v1/execute
   - npm install
 
 script:
-  - bash test.sh stage
+  - bash test-ci.sh $TRAVIS_BRANCH
 
 after_success:
-  - bash docker-push.sh
+  - bash ./docker-push.sh
+  - bash ./docker-deploy-stage.sh
+  - bash ./docker-deploy-prod.sh
 
 after_script:
   - docker-compose down

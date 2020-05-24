@@ -10,10 +10,11 @@ exports[`About renders a snapshot properly 1`] = `
   <hr />
   <br />
   <p>
-    <a>
-      https://github.com/northkevin/microservice-app
+    <a
+      href="https://github.com/northkevin/microservice-app"
+    >
+      View the source code for this application on Github
     </a>
-    View code on Github
   </p>
 </div>
 `;

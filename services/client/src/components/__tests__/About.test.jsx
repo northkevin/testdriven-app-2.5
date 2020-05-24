@@ -8,7 +8,7 @@ test('About renders properly', () => {
   const wrapper = shallow(<About/>);
   const element = wrapper.find('p');
   expect(element.length).toBe(1);
-  expect(element.text()).toBe('https://github.com/northkevin/microservice-appView code on Github');
+  expect(element.text()).toBe('View the source code for this application on Github');
 });
 
 test('About renders a snapshot properly', () => {

@@ -24,9 +24,8 @@ describe('Status', () => {
       .get('input[name="email"]').type(email)
       .get('input[name="password"]').type(password)
       .get('input[type="submit"]').click()
-      .get('.navbar-burger').click();
-
-    cy.wait(500);
+      .get('.notification.is-success').should('contain', 'Welcome!')
+      
 
     // assert '/status' is displayed properly
     cy.visit('/status');

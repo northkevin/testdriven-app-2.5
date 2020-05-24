@@ -47,6 +47,11 @@ def seed_db():
         email='michael@mherman.org',
         password='greaterthaneight'
     ))
+    db.session.add(User(
+        username='me',
+        email='me@test.com',
+        password='greaterthan10'
+    ))
     db.session.commit()
 
 
