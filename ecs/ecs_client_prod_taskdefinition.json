@@ -2,7 +2,7 @@
   "containerDefinitions": [
     {
       "name": "client",
-      "image": "%s.dkr.ecr.us-east-1.amazonaws.com/test-driven-client:production",
+      "image": "%s.dkr.ecr.us-east-2.amazonaws.com/test-driven-client:production",
       "essential": true,
       "memoryReservation": 300,
       "portMappings": [
@@ -16,7 +16,7 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "testdriven-client-prod",
-          "awslogs-region": "us-east-1"
+          "awslogs-region": "us-east-2"
         }
       }
     }
