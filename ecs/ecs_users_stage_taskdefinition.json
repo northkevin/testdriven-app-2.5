@@ -2,7 +2,7 @@
   "containerDefinitions": [
     {
       "name": "users",
-      "image": "%s.dkr.ecr.us-west-1.amazonaws.com/test-driven-users:staging",
+      "image": "%s.dkr.ecr.us-east-1.amazonaws.com/test-driven-users:staging",
       "essential": true,
       "memoryReservation": 300,
       "portMappings": [
@@ -30,20 +30,18 @@
           "value": "my_precious"
         }
       ],
-      "links": [
-        "users-db"
-      ],
+      "links": ["users-db"],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "testdriven-users-stage",
-          "awslogs-region": "us-west-1"
+          "awslogs-region": "us-east-1"
         }
       }
     },
     {
       "name": "users-db",
-      "image": "%s.dkr.ecr.us-west-1.amazonaws.com/test-driven-users_db:staging",
+      "image": "%s.dkr.ecr.us-east-1.amazonaws.com/test-driven-users_db:staging",
       "essential": true,
       "memoryReservation": 300,
       "portMappings": [
@@ -67,7 +65,7 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "testdriven-users_db-stage",
-          "awslogs-region": "us-west-1"
+          "awslogs-region": "us-east-1"
         }
       }
     }

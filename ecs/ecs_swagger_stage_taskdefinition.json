@@ -2,14 +2,14 @@
   "containerDefinitions": [
     {
       "name": "swagger",
-      "image": "%s.dkr.ecr.us-west-1.amazonaws.com/test-driven-swagger:staging",
+      "image": "%s.dkr.ecr.us-east-1.amazonaws.com/test-driven-swagger:staging",
       "essential": true,
 
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "testdriven-swagger-stage",
-          "awslogs-region": "us-west-1"
+          "awslogs-region": "us-east-1"
         }
       },
       "portMappings": [

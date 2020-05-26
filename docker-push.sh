@@ -12,7 +12,7 @@ then
     export REACT_APP_EXERCISES_SERVICE_URL="http://testdriven-staging-alb-1218835432.us-east-2.elb.amazonaws.com"
   elif [[ "$TRAVIS_BRANCH" == "production" ]]; then
      export DOCKER_ENV=prod
-     export REACT_APP_USERS_SERVICE_URL="http://testdriven-production-alb-1863924933.us-west-1.elb.amazonaws.com"
+     export REACT_APP_USERS_SERVICE_URL="http://testdriven-production-alb-1863924933.us-east-1.elb.amazonaws.com"
      export DATABASE_URL="$AWS_RDI_URI"
      export SECRET_KEY="$PRODUCTION_SECRET_KEY"
   fi
@@ -21,9 +21,9 @@ then
     ./awscli-bundle/install -b ~/bin/aws
     export PATH=~/bin:$PATH
     # add AWS_ACCOUNT_ID, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY env vars
-    eval $(aws ecr get-login --region us-west-1 --no-include-email)
+    eval $(aws ecr get-login --region us-east-1 --no-include-email)
     export TAG=$TRAVIS_BRANCH
-    export REPO=$AWS_ACCOUNT_ID.dkr.ecr.us-west-1.amazonaws.com
+    export REPO=$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
   fi
 
   if [ "$TRAVIS_BRANCH" == "staging" ] || \
