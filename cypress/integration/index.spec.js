@@ -67,6 +67,8 @@ describe("Index", () => {
       .contains("Swagger")
       .get("a")
       .contains("Users")
+      .get(".navbar-burger")
+      .click()
       .get("button")
       .contains("Run Code")
       .get(".notification.is-warning")
