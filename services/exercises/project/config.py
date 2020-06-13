@@ -12,6 +12,7 @@ class BaseConfig:
     DEBUG_TB_ENABLED = False
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     SECRET_KEY = os.environ.get('SECRET_KEY')
+    USERS_SERVICE_URL = os.environ.get('USERS_SERVICE_URL')
 
 
 class DevelopmentConfig(BaseConfig):
