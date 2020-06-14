@@ -6,6 +6,7 @@ import unittest
 
 import coverage
 from flask.cli import FlaskGroup
+from flask import current_app
 
 from project import create_app, db
 from project.api.models import Exercise
