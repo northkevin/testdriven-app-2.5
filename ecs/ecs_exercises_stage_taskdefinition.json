@@ -18,10 +18,6 @@
           "value": "project.config.StagingConfig"
         },
         {
-          "name": "USERS_SERVICE_URL",
-          "value": "http://users:5000"
-        },
-        {
           "name": "DATABASE_TEST_URL",
           "value": "postgres://postgres:postgres@exercises-db:5432/exercises_test"
         },

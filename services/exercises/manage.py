@@ -55,6 +55,15 @@ def seed_db():
     ))
     db.session.commit()
 
+@cli.command()
+def debug():
+    """prints debug info"""
+    print("dumping value of 'current_app.config'\n")
+    print(current_app.config)
+    print("\n")
+    print("\ndumping value of 'current_app.config['USERS_SERVICE_URL']'")
+    print(current_app.config['USERS_SERVICE_URL'])
+
 
 @cli.command()
 def test():
