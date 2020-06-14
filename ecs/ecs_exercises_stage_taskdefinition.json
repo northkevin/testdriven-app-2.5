@@ -27,7 +27,7 @@
         },
         {
           "name": "USERS_SERVICE_URL",
-          "value": "http://users:5000"
+          "value": "http://testdriven-staging-alb-1218835432.us-east-2.elb.amazonaws.com"
         }
       ],
       "links": ["exercises-db"],

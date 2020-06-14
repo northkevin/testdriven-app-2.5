@@ -37,7 +37,7 @@ services:
     environment:
       - FLASK_ENV=production
       - APP_SETTINGS=project.config.ProductionConfig
-      - USERS_SERVICE_URL=http://users:5000
+      - USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}
       - DATABASE_URL=postgres://postgres:postgres@exercises-db:5432/exercises_prod
       - DATABASE_TEST_URL=postgres://postgres:postgres@exercises-db:5432/exercises_test
       - SECRET_KEY=${SECRET_KEY}
