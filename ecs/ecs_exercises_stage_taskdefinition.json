@@ -24,6 +24,10 @@
         {
           "name": "DATABASE_URL",
           "value": "postgres://postgres:postgres@exercises-db:5432/exercises_stage"
+        },
+        {
+          "name": "USERS_SERVICE_URL",
+          "value": "http://users:5000"
         }
       ],
       "links": ["exercises-db"],
