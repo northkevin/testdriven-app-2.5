@@ -69,7 +69,7 @@ describe("Index", () => {
       .contains("Users")
       .get(".navbar-burger")
       .click()
-      .get("button")
+      .get(".button")
       .contains("Run Code")
       .get(".notification.is-warning")
       .should("not.be.visible")
