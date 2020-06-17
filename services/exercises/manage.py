@@ -64,6 +64,10 @@ def debug():
     print("\n")
     print("\ndumping value of 'current_app.config['USERS_SERVICE_URL']'")
     print(current_app.config['USERS_SERVICE_URL'])
+    print("\n")
+    token = "Authorization: Bearer 123"
+    print("calling ensure_authenticated({0})".format(token))
+    print(ensure_authenticated(token))
 
 
 @cli.command()
