@@ -50,7 +50,7 @@ e2e() {
 
 
 # run appropriate tests
-if [[ "${arg1}" == "up" ]]; then
+if [[ "${arg1}" == "dev" ]]; then
   echo "setting local up!"
   dev
 elif [[ "${arg1}" == "e2e" ]]; then
@@ -61,9 +61,9 @@ fi
 
 # return proper code
 if [ -n "${fails}" ]; then
-  echo "dev failed: ${fails}"
+  echo "up failed: ${fails}"
   exit 1
 else
-  echo "dev passed!"
+  echo "up passed!"
   exit 0
 fi
