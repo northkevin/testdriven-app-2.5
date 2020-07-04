@@ -45,7 +45,17 @@ describe("Exercises", () => {
       .contains("Run Code");
 
     // assert user can submit an exercise
-    cy.get("button").contains("Run Code").click().wait(600);
-    cy.get("h5 > .grade-text").should("contain", "Incorrect!");
+    // new
+    for (let i = 0; i < 23; i++) {
+      cy.get("textarea").type("{backspace}", { force: true });
+    }
+    cy.get("textarea")
+      .type("def sum(x,y):\nreturn x+y", { force: true }) // new
+      .get("button")
+      .contains("Run Code")
+      .click()
+      .wait("@gradeExercise")
+      .get("h5 > .grade-text")
+      .contains("Correct!"); // new
   });
 });
