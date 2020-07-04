@@ -18,16 +18,16 @@
           "value": "project.config.StagingConfig"
         },
         {
-          "name": "USERS_SERVICE_URL",
-          "value": "http://users:5000"
-        },
-        {
           "name": "DATABASE_TEST_URL",
           "value": "postgres://postgres:postgres@exercises-db:5432/exercises_test"
         },
         {
           "name": "DATABASE_URL",
           "value": "postgres://postgres:postgres@exercises-db:5432/exercises_stage"
+        },
+        {
+          "name": "USERS_SERVICE_URL",
+          "value": "http://testdriven-staging-alb-1218835432.us-east-2.elb.amazonaws.com"
         }
       ],
       "links": ["exercises-db"],

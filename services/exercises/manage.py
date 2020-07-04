@@ -6,6 +6,7 @@ import unittest
 
 import coverage
 from flask.cli import FlaskGroup
+from flask import current_app
 
 from project import create_app, db
 from project.api.models import Exercise
@@ -37,23 +38,36 @@ def seed_db():
     db.session.add(Exercise(
         body=('Define a function called sum that takes two integers as '
               'arguments and returns their sum.'),
-        test_code='print(sum(2, 3))',
+        test_code='sum(2, 3)',  # new
         test_code_solution='5'
     ))
     db.session.add(Exercise(
         body=('Define a function called reverse that takes a string as '
               'an argument and returns the string in reversed order.'),
-        test_code='print(reverse(racecar))',
+        test_code='reverse("racecar")',  # new
         test_code_solution='racecar'
     ))
     db.session.add(Exercise(
         body=('Define a function called factorial that takes a random number '
               'as an argument and then returns the factorial of that given '
               'number.'),
-        test_code='print(factorial(5))',
+        test_code='factorial(5)',  # new
         test_code_solution='120'
     ))
     db.session.commit()
+
+@cli.command()
+def debug():
+    """prints debug info"""
+    print("dumping value of 'current_app.config'\n")
+    print(current_app.config)
+    print("\n")
+    print("\ndumping value of 'current_app.config['USERS_SERVICE_URL']'")
+    print(current_app.config['USERS_SERVICE_URL'])
+    print("\n")
+    token = "Authorization: Bearer 123"
+    print("calling ensure_authenticated({0})".format(token))
+    print(ensure_authenticated(token))
 
 
 @cli.command()
