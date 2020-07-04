@@ -1,10 +1,12 @@
-import React from 'react';
+import React from "react";
+import PropTypes from "prop-types";
 
 const UsersList = (props) => {
   return (
     <div>
       <h1 className="title is-1">All Users</h1>
-      <hr/><br/>
+      <hr />
+      <br />
       <table className="table is-hoverable is-fullwidth">
         <thead>
           <tr>
@@ -16,7 +18,7 @@ const UsersList = (props) => {
           </tr>
         </thead>
         <tbody>
-          {
+          {props.users &&
             props.users.map((user) => {
               return (
                 <tr key={user.id}>
@@ -26,13 +28,16 @@ const UsersList = (props) => {
                   <td>{String(user.active)}</td>
                   <td>{String(user.admin)}</td>
                 </tr>
-              )
-            })
-          }
+              );
+            })}
         </tbody>
       </table>
     </div>
-  )
+  );
+};
+
+UsersList.propTypes = {
+  users: PropTypes.array.isRequired,
 };
 
 export default UsersList;

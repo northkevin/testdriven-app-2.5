@@ -27,6 +27,11 @@ const testData = {
   submitExercise: jest.fn(),
 };
 
+beforeEach(() => {
+  console.error = jest.fn();
+  console.error.mockClear();
+});
+
 test("Exercise renders property", () => {
   const wrapper = shallow(<Exercise {...testData} />);
   const heading = wrapper.find("h5");

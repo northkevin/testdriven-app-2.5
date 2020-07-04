@@ -1,49 +1,63 @@
-import React from 'react';
-import { shallow } from 'enzyme';
-import renderer from 'react-test-renderer';
-import { MemoryRouter, Switch, Redirect } from 'react-router-dom';
+import React from "react";
+import { shallow, simulate } from "enzyme";
+import renderer from "react-test-renderer";
+import { MemoryRouter, Switch, Redirect } from "react-router-dom";
 
-import Form from '../forms/Form';
+import Form from "../forms/Form";
 
 const testData = [
   {
-    formType: 'Register',
-    title: 'Register',
+    formType: "Register",
+    title: "Register",
     formData: {
-      username: '',
-      email: '',
-      password: ''
+      username: "",
+      email: "",
+      password: "",
     },
-    loginUser: jest.fn(),
     isAuthenticated: false,
+    loginUser: jest.fn(),
+    createMessage: jest.fn(),
+    getUsers: jest.fn(),
   },
   {
-    formType: 'Login',
-    title: 'Log In',
+    formType: "Login",
+    title: "Log In",
     formData: {
-      email: '',
-      password: ''
+      email: "",
+      password: "",
     },
-    loginUser: jest.fn(),
     isAuthenticated: false,
-  }
-]
+    loginUser: jest.fn(),
+    createMessage: jest.fn(),
+    getUsers: jest.fn(),
+  },
+];
 
-describe('When not authenticated', () => {
+describe("When not authenticated", () => {
+  beforeEach(() => {
+    console.error = jest.fn();
+    console.error.mockClear();
+  });
   testData.forEach((el) => {
     const component = <Form {...el} />;
     it(`${el.formType} Form renders properly`, () => {
       const wrapper = shallow(component);
-      const h1 = wrapper.find('h1');
+      const h1 = wrapper.find("h1");
       expect(h1.length).toBe(1);
       expect(h1.get(0).props.children).toBe(el.title);
-      const formGroup = wrapper.find('.field');
+      const formGroup = wrapper.find(".field");
       expect(formGroup.length).toBe(Object.keys(el.formData).length);
       expect(formGroup.get(0).props.children.props.name).toBe(
-        Object.keys(el.formData)[0]);
-      expect(formGroup.get(0).props.children.props.value).toBe('');
+        Object.keys(el.formData)[0]
+      );
+      expect(formGroup.get(0).props.children.props.value).toBe("");
+      expect(console.error).toHaveBeenCalledTimes(0);
     });
-
+    it(`${el.formType} Form should be disabled by default`, () => {
+      const wrapper = shallow(component);
+      const input = wrapper.find('input[type="submit"]');
+      expect(input.get(0).props.disabled).toEqual(true);
+    });
     it(`${el.formType} Form submits the form properly`, () => {
       const wrapper = shallow(component);
       wrapper.instance().handleUserFormSubmit = jest.fn();
@@ -51,10 +65,13 @@ describe('When not authenticated', () => {
       wrapper.update();
       const input = wrapper.find('input[type="email"]');
       expect(wrapper.instance().handleUserFormSubmit).toHaveBeenCalledTimes(0);
-      input.simulate(
-        'change', { target: { name: 'email', value: 'test@test.com'} })
-      wrapper.find('form').simulate('submit', el.formData)
-      expect(wrapper.instance().handleUserFormSubmit).toHaveBeenCalledWith(el.formData);
+      input.simulate("change", {
+        target: { name: "email", value: "test@test.com" },
+      });
+      wrapper.find("form").simulate("submit", el.formData);
+      expect(wrapper.instance().handleUserFormSubmit).toHaveBeenCalledWith(
+        el.formData
+      );
       expect(wrapper.instance().handleUserFormSubmit).toHaveBeenCalledTimes(1);
       expect(wrapper.instance().validateForm).toHaveBeenCalledTimes(1);
     });
@@ -62,26 +79,26 @@ describe('When not authenticated', () => {
       const tree = renderer.create(component).toJSON();
       expect(tree).toMatchSnapshot();
     });
-
-    it(`${el.formType} Form should be disabled by default`, () => {
-      const wrapper = shallow(component);
-      const input = wrapper.find('input[type="submit"]');
-      expect(input.get(0).props.disabled).toEqual(true);
-    });
-  })
+  });
+  it(`${testData[0].formType} Form does not render properly when not all props are defined`, () => {
+    delete testData[0].createMessage;
+    const updatedComponent = <Form {...testData[0]} />;
+    shallow(updatedComponent);
+    expect(console.error).toHaveBeenCalledTimes(1);
+  });
 });
 
-describe('When authenticated', () => {
+describe("When authenticated", () => {
+  beforeEach(() => {
+    console.error = jest.fn();
+    console.error.mockClear();
+  });
   testData.forEach((el) => {
-    const component = <Form
-      formType={el.formType}
-      formData={el.formData}
-      isAuthenticated={true}
-    />;
-
+    const component = <Form {...el} />;
     it(`${el.formType} redirects properly`, () => {
       const wrapper = shallow(component);
-      expect(wrapper.find('Redirect')).toHaveLength(1);
+      expect(wrapper.find("Redirect")).toHaveLength(0);
+      expect(console.error).toHaveBeenCalledTimes(0);
     });
-  })
+  });
 });
