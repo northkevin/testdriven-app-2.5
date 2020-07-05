@@ -118,6 +118,7 @@ services:
     depends_on:
       - users
       - scores-db
+      - exercises
 
   scores-db:
     build:

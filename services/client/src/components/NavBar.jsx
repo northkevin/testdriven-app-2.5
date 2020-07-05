@@ -28,9 +28,6 @@ const NavBar = (props) => (
       </div>
       <div className="navbar-menu">
         <div className="navbar-start">
-          <Link to="/all-scores" className="navbar-item">
-            Scores
-          </Link>
           <Link to="/" className="navbar-item">
             Home
           </Link>

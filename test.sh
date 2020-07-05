@@ -23,8 +23,14 @@ server() {
   docker-compose exec exercises python manage.py test
   inspect $? exercises
   # lint exercises service
-  docker-compose exec exercises python manage.py test
+  docker-compose exec exercises flake8 project
   inspect $? exercises-lint
+  # test scores service
+  docker-compose exec scores python manage.py test
+  inspect $? scores
+  # lint scores service
+  docker-compose exec scores flake8 project
+  inspect $? scores-lint
   docker-compose down
 }
 
@@ -58,8 +64,14 @@ all() {
   docker-compose exec exercises python manage.py test
   inspect $? exercises
   # lint exercises service
-  docker-compose exec exercises python manage.py test
+  docker-compose exec exercises flake8 project
   inspect $? exercises-lint
+  # test scores service
+  docker-compose exec scores python manage.py test
+  inspect $? scores
+  # lint scores service
+  docker-compose exec scores flake8 project
+  inspect $? scores-lint
   # test client service
   docker-compose exec client npm test -- --coverage
   inspect $? client
