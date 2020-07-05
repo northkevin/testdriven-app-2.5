@@ -3,6 +3,8 @@
 
 import sys
 import unittest
+import os
+import requests
 
 import coverage
 from flask.cli import FlaskGroup
@@ -35,21 +37,22 @@ def recreate_db():
 @cli.command('seed_db')
 def seed_db():
     """Seeds the database."""
-    print("Seeding the database..")
-    score = Score(
-        user_id=123,
-        exercise_id=456,
-        correct=True
-    )
-    score_2 = Score(
-        user_id=123,
-        exercise_id=456,
-        correct=True
-    )
-    db.session.add(score)
-    db.session.add(score_2)
+    # get exercises
+    url = '{0}/exercises'.format(os.environ.get('EXERCISES_SERVICE_URL'))
+    response = requests.get(url)
+    exercises = response.json()['data']['exercises']
+    # get users
+    url = '{0}/users'.format(os.environ.get('USERS_SERVICE_URL'))
+    response = requests.get(url)
+    users = response.json()['data']['users']
+    # seed
+    for user in users:
+        for exercise in exercises:
+            db.session.add(Score(
+                user_id=user['id'],
+                exercise_id=exercise['id']
+            ))
     db.session.commit()
-    print(score)
     
 
 @cli.command()

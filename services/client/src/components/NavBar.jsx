@@ -28,7 +28,7 @@ const NavBar = (props) => (
       </div>
       <div className="navbar-menu">
         <div className="navbar-start">
-          <Link to="/scores" className="navbar-item">
+          <Link to="/all-scores" className="navbar-item">
             Scores
           </Link>
           <Link to="/" className="navbar-item">

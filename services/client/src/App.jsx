@@ -110,7 +110,7 @@ class App extends Component {
                   />
                   <Route
                     exact
-                    path="/scores"
+                    path="/all-scores"
                     render={() => <ScoresList scores={this.state.scores} />}
                   />
                   <Route
