@@ -16,12 +16,14 @@ dev() {
   export REACT_APP_API_GATEWAY_URL=https://p8xqn5cer1.execute-api.us-east-2.amazonaws.com/v1/execute
 	export REACT_APP_USERS_SERVICE_URL=http://localhost
 	export REACT_APP_EXERCISES_SERVICE_URL=http://localhost
+  export REACT_APP_SCORES_SERVICE_URL=http://localhost
   echo "REACT_APP_API_GATEWAY_URL=${REACT_APP_API_GATEWAY_URL}"
   echo "REACT_APP_USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}"
   echo "REACT_APP_EXERCISES_SERVICE_URL=${REACT_APP_EXERCISES_SERVICE_URL}"
+  echo "REACT_APP_SCORES_SERVICE_URL=${REACT_APP_SCORES_SERVICE_URL}"
   # docker up
   docker-compose up -d --build
-  echo "hii?"
+  echo "recreate_db.."
   # recreate_db
   docker-compose exec users python manage.py recreate_db
   inspect $? users-recreate_db
@@ -29,6 +31,7 @@ dev() {
   inspect $? exercises-recreate_db
   docker-compose exec scores python manage.py recreate_db
   inspect $? scores-recreate_db
+  echo "seed_db.."
   # seed_db
   docker-compose exec users python manage.py seed_db
   inspect $? users-seed_db
