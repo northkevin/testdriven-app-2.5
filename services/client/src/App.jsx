@@ -11,12 +11,14 @@ import UserStatus from "./components/UserStatus";
 import Message from "./components/Message";
 import Footer from "./components/Footer";
 import Exercises from "./components/Exercises";
+import ScoresList from "./components/ScoresList";
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
       users: [],
+      scores: [],
       title: "learntocode.io",
       isAuthenticated: false,
       messageName: null,
@@ -34,6 +36,7 @@ class App extends Component {
   }
   componentDidMount() {
     this.getUsers();
+    this.getScores();
   }
   getUsers() {
     axios
@@ -42,6 +45,16 @@ class App extends Component {
         this.setState({ users: res.data.data.users });
       })
       .catch((err) => {});
+  }
+  getScores() {
+    axios
+      .get(`${process.env.REACT_APP_SCORES_SERVICE_URL}/scores`)
+      .then((res) => {
+        this.setState({ scores: res.data.data.scores });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
   logoutUser() {
     window.localStorage.clear();
@@ -94,6 +107,11 @@ class App extends Component {
                     render={() => (
                       <Exercises isAuthenticated={this.state.isAuthenticated} />
                     )}
+                  />
+                  <Route
+                    exact
+                    path="/scores"
+                    render={() => <ScoresList scores={this.state.scores} />}
                   />
                   <Route
                     exact
