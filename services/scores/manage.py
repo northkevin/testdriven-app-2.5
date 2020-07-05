@@ -27,25 +27,30 @@ cli = FlaskGroup(create_app=create_app)
 
 @cli.command('recreate_db')
 def recreate_db():
+    print("Recreating the database..")
     db.drop_all()
     db.create_all()
     db.session.commit()
 
-
 @cli.command('seed_db')
 def seed_db():
     """Seeds the database."""
-    db.session.add(Score(
-        user_id=1,
-        exercise_id=1,
+    print("Seeding the database..")
+    score = Score(
+        user_id=123,
+        exercise_id=456,
         correct=True
-    ))
-    db.session.add(Score(
-        user_id=1,
-        exercise_id=2,
-        correct=False
-    ))
+    )
+    score_2 = Score(
+        user_id=123,
+        exercise_id=456,
+        correct=True
+    )
+    db.session.add(score)
+    db.session.add(score_2)
     db.session.commit()
+    print(score)
+    
 
 @cli.command()
 def debug():

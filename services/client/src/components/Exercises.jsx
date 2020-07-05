@@ -99,4 +99,8 @@ class Exercises extends Component {
   }
 }
 
+Exercises.propTypes = {
+  isAuthenticated: PropTypes.bool.isRequired,
+};
+
 export default Exercises;
