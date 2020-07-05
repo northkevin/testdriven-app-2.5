@@ -55,7 +55,7 @@ def authenticate_restful(f):
 def ensure_authenticated(token):
     if current_app.config['TESTING']:
         test_response = {
-            'data': {'id': 998877, 'user_id': 12345, 'exercise_id': 56789, correct: False},
+            'data': {'id': 998877, 'user_id': 12345, 'exercise_id': 56789, 'correct': False},
             'status': 'success'
         }
         return test_response

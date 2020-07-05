@@ -14,7 +14,7 @@ from project.tests.utils import add_score
 class TestScoreModel(BaseTestCase):
 
     def test_add_score(self):
-        score = add_exercise(user_id=1,
+        score = add_score(user_id=1,
         exercise_id=2,
         correct=False)
         self.assertTrue(score.id)

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-arg1=$1
+env=$1
 fails=""
 
 inspect() {
@@ -16,18 +16,27 @@ dev() {
   export REACT_APP_API_GATEWAY_URL=https://p8xqn5cer1.execute-api.us-east-2.amazonaws.com/v1/execute
 	export REACT_APP_USERS_SERVICE_URL=http://localhost
 	export REACT_APP_EXERCISES_SERVICE_URL=http://localhost
+  echo "REACT_APP_API_GATEWAY_URL=${REACT_APP_API_GATEWAY_URL}"
+  echo "REACT_APP_USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}"
+  echo "REACT_APP_EXERCISES_SERVICE_URL=${REACT_APP_EXERCISES_SERVICE_URL}"
   # docker up
   docker-compose up -d --build
+  echo "hii?"
   # recreate_db
   docker-compose exec users python manage.py recreate_db
   inspect $? users-recreate_db
   docker-compose exec exercises python manage.py recreate_db
   inspect $? exercises-recreate_db
+  docker-compose exec scores python manage.py recreate_db
+  inspect $? scores-recreate_db
   # seed_db
   docker-compose exec users python manage.py seed_db
   inspect $? users-seed_db
   docker-compose exec exercises python manage.py seed_db
   inspect $? exercises-seed_db
+  docker-compose exec scores python manage.py seed_db
+  inspect $? scores-seed_db
+  docker-compose logs
 }
 
 # bring local staging up
@@ -50,10 +59,10 @@ e2e() {
 
 
 # run appropriate tests
-if [[ "${arg1}" == "dev" ]]; then
-  echo "setting local up!"
+if [[ "${env}" == "dev" ]]; then
+  echo "setting dev up!"
   dev
-elif [[ "${arg1}" == "e2e" ]]; then
+elif [[ "${env}" == "e2e" ]]; then
   echo "\n"
   echo "setting staging up & opening cypress!\n"
   e2e
@@ -61,9 +70,9 @@ fi
 
 # return proper code
 if [ -n "${fails}" ]; then
-  echo "up failed: ${fails}"
+  echo "up for ${env} failed: ${fails}"
   exit 1
 else
-  echo "up passed!"
+  echo "up for ${env} passed!"
   exit 0
 fi

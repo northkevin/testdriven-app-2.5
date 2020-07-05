@@ -37,12 +37,12 @@ def seed_db():
     """Seeds the database."""
     db.session.add(Score(
         user_id=1,
-        exercise_id=1,  # new
+        exercise_id=1,
         correct=True
     ))
     db.session.add(Score(
         user_id=1,
-        exercise_id=2,  # new
+        exercise_id=2,
         correct=False
     ))
     db.session.commit()

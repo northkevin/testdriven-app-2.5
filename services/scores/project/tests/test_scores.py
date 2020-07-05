@@ -5,64 +5,68 @@ import json
 import unittest
 
 from project.tests.base import BaseTestCase
-from project.tests.utils import add_exercise
+from project.tests.utils import add_score
 
 
 class TestExercisesService(BaseTestCase):
     """Tests for the Exercises Service."""
 
-    def test_all_exercises(self):
+    def test_all_scores(self):
         """Ensure get all exercises behaves correctly."""
-        add_exercise()
-        add_exercise(
-            'Just a sample', 'print("Hello, World!")', 'Hello, World!')
+        add_score(
+            user_id=1,
+        exercise_id=1,
+        correct=True)
+        add_score(user_id=2,
+        exercise_id=2,
+        correct=False)
         with self.client:
-            response = self.client.get('/exercises')
+            response = self.client.get('/scores')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(len(data['data']['exercises']), 2)
-            self.assertIn(
-                'Define a function called sum',
-                data['data']['exercises'][0]['body'])
+            self.assertEqual(len(data['data']['scores']), 2)
             self.assertEqual(
-                'Just a sample',
-                data['data']['exercises'][1]['body'])
+                1,
+                data['data']['scores'][0]['user_id'])
             self.assertEqual(
-                'sum(2, 2)', data['data']['exercises'][0]['test_code'])
+                2,
+                data['data']['scores'][1]['user_id'])
             self.assertEqual(
-                'print("Hello, World!")',
-                data['data']['exercises'][1]['test_code'])
+                1, data['data']['scores'][0]['exercise_id'])
             self.assertEqual(
-                '4', data['data']['exercises'][0]['test_code_solution'])
+                2,
+                data['data']['scores'][1]['exercise_id'])
             self.assertEqual(
-                'Hello, World!',
-                data['data']['exercises'][1]['test_code_solution'])
+                True, data['data']['scores'][0]['correct'])
+            self.assertEqual(
+                False,
+                data['data']['scores'][1]['correct'])
             self.assertIn('success', data['status'])
 
 
-    def test_add_exercise(self):
-        """Ensure a new exercise can be added to the database."""
+    def test_add_score(self):
+        """Ensure a new score can be added to the database."""
         with self.client:
             response = self.client.post(
-                '/exercises',
+                '/scores',
                 data=json.dumps({
-                    'body': 'Sample sample',
-                    'test_code': 'get_sum(2, 2)',
-                    'test_code_solution': '4',
+                    'user_id': 3,
+                    'exercise_id': 3,
+                    'correct': True,
                 }),
                 content_type='application/json',
                 headers=({'Authorization': 'Bearer test'})
             )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 201)
-            self.assertIn('New exercise was added!', data['message'])
+            self.assertIn('New score was added!', data['message'])
             self.assertIn('success', data['status'])
 
     def test_add_exercise_invalid_json(self):
         """Ensure error is thrown if the JSON object is empty."""
         with self.client:
             response = self.client.post(
-                '/exercises',
+                '/scores',
                 data=json.dumps({}),
                 content_type='application/json',
                 headers=({'Authorization': 'Bearer test'})
@@ -72,11 +76,11 @@ class TestExercisesService(BaseTestCase):
             self.assertIn('Invalid payload.', data['message'])
             self.assertIn('fail', data['status'])
 
-    def test_add_exercise_invalid_json_keys(self):
+    def test_add_score_invalid_json_keys(self):
         """Ensure error is thrown if the JSON object is invalid."""
         with self.client:
             response = self.client.post(
-                '/exercises',
+                '/scores',
                 data=json.dumps({'body': 'test'}),
                 content_type='application/json',
                 headers=({'Authorization': 'Bearer test'})
@@ -86,15 +90,15 @@ class TestExercisesService(BaseTestCase):
             self.assertIn('Invalid payload.', data['message'])
             self.assertIn('fail', data['status'])
 
-    def test_add_exercise_no_header(self):
+    def test_add_score_no_header(self):
         """Ensure error is thrown if 'Authorization' header is empty."""
         response = self.client.post(
-            '/exercises',
+            '/scores',
             data=json.dumps({
-                'body': 'Sample sample',
-                'test_code': 'get_sum(2, 2)',
-                'test_code_solution': '4',
-            }),
+                    'user_id': 4,
+                    'exercise_id': 4,
+                    'correct': True,
+                }),
             content_type='application/json'
         )
         data = json.loads(response.data.decode())
