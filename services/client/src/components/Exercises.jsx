@@ -19,6 +19,7 @@ class Exercises extends Component {
     };
     this.onChange = this.onChange.bind(this);
     this.submitExercise = this.submitExercise.bind(this);
+    this.updateScore = this.updateScore.bind(this);
   }
   onChange(value) {
     const newState = this.state.editor;
@@ -40,25 +41,28 @@ class Exercises extends Component {
       solution: exercise.test_code_solution,
     };
     const url = process.env.REACT_APP_API_GATEWAY_URL;
-    console.log(url);
     axios
       .post(url, data)
       .then((res) => {
-        console.log(res);
         newState.showGrading = false;
         newState.button.isDisabled = false;
+        // new
         if (res.data && !res.data.errorType) {
           newState.showCorrect = true;
-        } // new
+          this.updateScore(exercise.id, true);
+        }
+        // new
         if (!res.data || res.data.errorType) {
           newState.showIncorrect = true;
-        } // new
+          this.updateScore(exercise.id, false);
+        }
         this.setState(newState);
       })
       .catch((err) => {
         newState.showGrading = false;
         newState.button.isDisabled = false;
         console.log(err);
+        this.updateScore(exercise.id, false);
       });
   }
   getExercises() {
@@ -69,6 +73,24 @@ class Exercises extends Component {
       })
       .catch((err) => {
         console.log(err);
+      });
+  }
+  updateScore(exerciseID, bool) {
+    const options = {
+      url: `${process.env.REACT_APP_SCORES_SERVICE_URL}/scores/${exerciseID}`,
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${window.localStorage.authToken}`,
+      },
+      data: { correct: bool },
+    };
+    return axios(options)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }
   componentDidMount() {

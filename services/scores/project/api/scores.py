@@ -77,5 +77,44 @@ class ScoreList(Resource):
             db.session.rollback()
             return response_object, 400
 
+class ScoreViaExercise(Resource):
+
+    method_decorators = {'put': [authenticate_restful]}
+
+    def put(self, resp, exercise_id):
+        """Update score"""
+        post_data = request.get_json()
+        response_object = {
+            'status': 'fail',
+            'message': 'Invalid payload.'
+        }
+        if not post_data:
+            return response_object, 400
+        correct = post_data.get('correct')
+        try:
+            score = Score.query.filter_by(
+                exercise_id=int(exercise_id),
+                user_id=int(resp['data']['id'])
+            ).first()
+            if score:
+                score.correct = correct
+                db.session.commit()
+                response_object['status'] = 'success'
+                response_object['message'] = 'Score was updated!'
+                return response_object, 200
+            else:
+                db.session.add(Score(
+                    user_id=resp['data']['id'],
+                    exercise_id=int(exercise_id),
+                    correct=correct))
+                db.session.commit()
+                response_object['status'] = 'success'
+                response_object['message'] = 'New score was added!'
+                return response_object, 201
+        except (exc.IntegrityError, ValueError, TypeError):
+            db.session().rollback()
+            return response_object, 400
 
 api.add_resource(ScoreList, '/scores')
+
+api.add_resource(ScoreViaExercise, '/scores/<exercise_id>')

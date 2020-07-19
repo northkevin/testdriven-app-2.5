@@ -42,6 +42,21 @@ dev() {
   docker-compose logs
 }
 
+# bring local dev up .. but just rebuild
+devb() {
+  # set env vars
+  export REACT_APP_API_GATEWAY_URL=https://p8xqn5cer1.execute-api.us-east-2.amazonaws.com/v1/execute
+	export REACT_APP_USERS_SERVICE_URL=http://localhost
+	export REACT_APP_EXERCISES_SERVICE_URL=http://localhost
+  export REACT_APP_SCORES_SERVICE_URL=http://localhost
+  echo "REACT_APP_API_GATEWAY_URL=${REACT_APP_API_GATEWAY_URL}"
+  echo "REACT_APP_USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}"
+  echo "REACT_APP_EXERCISES_SERVICE_URL=${REACT_APP_EXERCISES_SERVICE_URL}"
+  echo "REACT_APP_SCORES_SERVICE_URL=${REACT_APP_SCORES_SERVICE_URL}"
+  # docker up
+  docker-compose up -d --build
+}
+
 # bring local staging up
 e2e() {
   # set env vars
@@ -65,6 +80,10 @@ e2e() {
 if [[ "${env}" == "dev" ]]; then
   echo "setting dev up!"
   dev
+elif [[ "${env}" == "devb" ]]; then
+  echo "\n"
+  echo "rebuilding dev.."
+  devb
 elif [[ "${env}" == "e2e" ]]; then
   echo "\n"
   echo "setting staging up & opening cypress!\n"
