@@ -18,6 +18,12 @@ describe("Login", () => {
   });
 
   it("should allow a user to sign in", () => {
+    cy.server()
+      .route("POST", "auth/login")
+      .as("createSession")
+      .route("GET", "/users")
+      .as("getAllUsers");
+
     // register user
     cy.visit("/register")
       .get('input[name="username"]')
@@ -43,7 +49,7 @@ describe("Login", () => {
       .type(password)
       .get('input[type="submit"]')
       .click()
-      .wait(100);
+      .wait("@createSession");
 
     // assert user is redirected to '/'
     cy.get(".notification.is-success").contains("Welcome!");
@@ -56,7 +62,7 @@ describe("Login", () => {
     cy.contains("All Users");
     cy.get("table").find("tbody > tr").last().find("td").contains(username);
     cy.get(".navbar-burger").click();
-    cy.wait(300);
+    cy.wait("@getAllUsers");
     cy.get(".navbar-menu").within(() => {
       cy.get(".navbar-item")
         .contains("User Status")
@@ -91,6 +97,8 @@ describe("Login", () => {
   });
 
   it("should throw an error if the credentials are incorrect", () => {
+    cy.server().route("POST", "auth/login").as("createSession");
+
     // attempt to log in
     cy.visit("/login")
       .get('input[name="email"]')
@@ -131,7 +139,7 @@ describe("Login", () => {
       .type("incorrectpassword")
       .get('input[type="submit"]')
       .click()
-      .wait(100);
+      .wait("@createSession");
 
     // assert user login failed
     cy.contains("All Users").should("not.be.visible");
