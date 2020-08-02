@@ -12,7 +12,14 @@ describe("Exercises", () => {
       .get(".notification.is-warning")
       .contains("Please log in to submit an exercise.")
       .get("button")
-      .should("not.be.visible");
+      .contains("Run Code")
+      .should("not.be.visible") // new
+      .get(".field.is-grouped") // new
+      .get("button")
+      .contains("Next") // new
+      .get("button")
+      .contains("Prev")
+      .should("not.be.visible"); // new
   });
 
   it("should allow a user to submit an exercise if logged in", () => {
@@ -42,20 +49,81 @@ describe("Exercises", () => {
       .get(".notification.is-danger")
       .should("not.be.visible")
       .get("button.button.is-primary")
-      .contains("Run Code");
+      .contains("Run Code")
+      .get(".field.is-grouped") // new
+      .get("button")
+      .contains("Next") // new
+      .get("button")
+      .contains("Prev")
+      .should("not.be.visible"); // new
 
     // assert user can submit an exercise
+    for (let i = 0; i < 23; i++) {
+      cy.get("textarea").type("{backspace}", { force: true });
+    }
+    cy.get("textarea")
+      .type("def sum(x,y):\nreturn x+y", { force: true })
+      .get("button")
+      .contains("Run Code")
+      .click()
+      .wait("@gradeExercise")
+      .get("h5 > .grade-text")
+      .contains("Correct!");
+  });
+
+  it("should allow a user to move to different exercises", () => {
+    cy.visit("/")
+      .get("h1")
+      .contains("Exercises")
+      .get(".notification.is-warning")
+      .contains("Please log in to submit an exercise.")
+      .get("button")
+      .contains("Run Code")
+      .should("not.be.visible")
+      .get(".field.is-grouped")
+      .get("button")
+      .contains("Next")
+      .get("button")
+      .contains("Prev")
+      .should("not.be.visible")
+      .get(".ace_comment")
+      .contains("# Enter your code here.") // new
+      // click next
+      .get("button")
+      .contains("Next")
+      .click()
+      .get("button")
+      .contains("Next")
+      .get("button")
+      .contains("Prev")
+      .get(".ace_comment")
+      .contains("# Enter your code here.") // new
+      // click next
+      .get("button")
+      .contains("Next")
+      .click()
+      .get("button")
+      .contains("Next")
+      .should("not.be.visible")
+      .get("button")
+      .contains("Prev")
+      .get(".ace_comment")
+      .contains("# Enter your code here."); // new
     // new
     for (let i = 0; i < 23; i++) {
       cy.get("textarea").type("{backspace}", { force: true });
     }
     cy.get("textarea")
       .type("def sum(x,y):\nreturn x+y", { force: true }) // new
+      // click prev
       .get("button")
-      .contains("Run Code")
+      .contains("Prev")
       .click()
-      .wait("@gradeExercise")
-      .get("h5 > .grade-text")
-      .contains("Correct!"); // new
+      .get("button")
+      .contains("Next")
+      .get("button")
+      .contains("Prev")
+      .get(".ace_comment")
+      .contains("# Enter your code here."); // new
   });
 });

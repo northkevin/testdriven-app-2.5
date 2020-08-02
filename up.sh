@@ -63,8 +63,9 @@ e2e() {
   export REACT_APP_API_GATEWAY_URL=https://p8xqn5cer1.execute-api.us-east-2.amazonaws.com/v1/execute
 	export REACT_APP_USERS_SERVICE_URL=http://localhost
 	export REACT_APP_EXERCISES_SERVICE_URL=http://localhost
+  export REACT_APP_SCORES_SERVICE_URL=http://localhost
   # docker up
-  docker-compose -f docker-compose-stage.yml up -d --build
+  docker-compose -f docker-compose-stage.yml up -d --build --remove-orphans
   # recreate_db
   docker-compose -f docker-compose-stage.yml exec users python manage.py recreate_db
   inspect $? users-recreate_db

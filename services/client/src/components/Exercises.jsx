@@ -8,6 +8,7 @@ class Exercises extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      currentExercise: 0,
       exercises: [],
       editor: {
         value: "# Enter your code here.",
@@ -16,10 +17,18 @@ class Exercises extends Component {
         showCorrect: false,
         showIncorrect: false,
       },
+      showButtons: {
+        prev: false,
+        next: false,
+      },
     };
     this.onChange = this.onChange.bind(this);
     this.submitExercise = this.submitExercise.bind(this);
     this.updateScore = this.updateScore.bind(this);
+    this.rednerButtons = this.renderButtons.bind(this);
+    this.nextExercise = this.nextExercise.bind(this);
+    this.prevExercise = this.prevExercise.bind(this);
+    this.resetEditor = this.resetEditor.bind(this);
   }
   onChange(value) {
     const newState = this.state.editor;
@@ -69,7 +78,11 @@ class Exercises extends Component {
     axios
       .get(`${process.env.REACT_APP_EXERCISES_SERVICE_URL}/exercises`)
       .then((res) => {
-        this.setState({ exercises: res.data.data.exercises });
+        this.setState({
+          exercises: res.data.data.exercises,
+          currentExercise: 0,
+        });
+        this.renderButtons();
       })
       .catch((err) => {
         console.log(err);
@@ -96,6 +109,53 @@ class Exercises extends Component {
   componentDidMount() {
     this.getExercises();
   }
+  renderButtons() {
+    const index = this.state.currentExercise;
+    let nextButton = false;
+    let prevButton = false;
+    if (typeof this.state.exercises[index + 1] !== "undefined") {
+      nextButton = true;
+    }
+    if (typeof this.state.exercises[index - 1] !== "undefined") {
+      prevButton = true;
+    }
+    this.setState({
+      showButtons: {
+        next: nextButton,
+        prev: prevButton,
+      },
+    });
+  }
+  nextExercise() {
+    if (this.state.showButtons.next) {
+      const currentExercise = this.state.currentExercise;
+      this.setState({ currentExercise: currentExercise + 1 }, () => {
+        this.resetEditor();
+        this.renderButtons(); // new
+      });
+    }
+  }
+  prevExercise() {
+    if (this.state.showButtons.prev) {
+      const currentExercise = this.state.currentExercise;
+      this.setState({ currentExercise: currentExercise - 1 }, () => {
+        this.resetEditor();
+        this.renderButtons(); // new
+      });
+    }
+  }
+  resetEditor() {
+    const editor = {
+      value: "# Enter your code here.",
+      button: {
+        isDisabled: false,
+      },
+      showGrading: false,
+      showCorrect: false,
+      showIncorrect: false,
+    };
+    this.setState({ editor: editor });
+  }
   render() {
     return (
       <div>
@@ -109,13 +169,32 @@ class Exercises extends Component {
         )}
         {this.state.exercises.length > 0 && (
           <Exercise
-            exercise={this.state.exercises[0]}
+            exercise={this.state.exercises[this.state.currentExercise]}
             editor={this.state.editor}
             isAuthenticated={this.props.isAuthenticated}
             onChange={this.onChange}
             submitExercise={this.submitExercise}
           />
         )}
+        <div className="field is-grouped">
+          {this.state.showButtons.prev && (
+            <button
+              className="button is-info"
+              onClick={() => this.prevExercise()}
+            >
+              &lt; Prev
+            </button>
+          )}
+          &nbsp;
+          {this.state.showButtons.next && (
+            <button
+              className="button is-info"
+              onClick={() => this.nextExercise()}
+            >
+              Next &gt;
+            </button>
+          )}
+        </div>
       </div>
     );
   }
