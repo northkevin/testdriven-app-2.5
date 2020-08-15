@@ -34,11 +34,11 @@ dev() {
 # run e2e tests
 # new
 e2e() {
-  docker-compose -f docker-compose-$1.yml up -d --build
-  docker-compose -f docker-compose-$1.yml exec users python manage.py recreate_db
+  docker-compose -f docker-compose-stage.yml up -d --build
+  docker-compose -f docker-compose-stage.yml exec users python manage.py recreate_db
   ./node_modules/.bin/cypress run --config baseUrl=http://localhost --env REACT_APP_API_GATEWAY_URL=$REACT_APP_API_GATEWAY_URL,LOAD_BALANCER_DNS_NAME=$LOAD_BALANCER_DNS_NAME
   inspect $? e2e
-  docker-compose -f docker-compose-$1.yml down
+  docker-compose -f docker-compose-stage.yml down
 }
 
 # run appropriate tests
@@ -46,10 +46,10 @@ if [[ "${env}" == "development" ]]; then
   echo "Running client and server-side tests!"
   dev
 elif [[ "${env}" == "staging" ]]; then
-  echo "Running e2e tests!"
+  echo "Running e2e tests for staging!"
   e2e stage
 elif [[ "${env}" == "production" ]]; then
-  echo "Running e2e tests!"
+  echo "Running e2e tests for prod!"
   e2e prod
 fi
 
