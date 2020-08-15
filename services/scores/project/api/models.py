@@ -1,9 +1,6 @@
 # services/scores/project/api/models.py
 
 
-from sqlalchemy.sql import func
-from flask import current_app
-
 from project import db
 
 
@@ -14,13 +11,12 @@ class Score(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, nullable=False)
     exercise_id = db.Column(db.Integer, nullable=False)
-    correct = db.Column(db.Boolean(), default=False)
+    correct = db.Column(db.Boolean, nullable=False)
 
     def __init__(self, user_id, exercise_id, correct=False):
         self.user_id = user_id
         self.exercise_id = exercise_id
         self.correct = correct
-        
 
     def to_json(self):
         return {

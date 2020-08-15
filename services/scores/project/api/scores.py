@@ -7,11 +7,12 @@ from flask_restful import Resource, Api
 
 from project import db
 from project.api.models import Score
-from project.api.utils import authenticate_restful, ensure_authenticated
+from project.api.utils import authenticate_restful
 
 
 scores_blueprint = Blueprint('scores', __name__)
 api = Api(scores_blueprint)
+
 
 @scores_blueprint.route('/scores/ping', methods=['GET'])
 def ping_pong():
@@ -20,11 +21,11 @@ def ping_pong():
         'message': 'pong!'
     })
 
-class ScoreList(Resource):
+
+class ScoresList(Resource):
+
     method_decorators = {'post': [authenticate_restful]}
 
-    # /scores GET
-    # authenticated? = No
     def get(self):
         """Get all scores"""
         response_object = {
@@ -37,34 +38,32 @@ class ScoreList(Resource):
         }
         return response_object, 200
 
-    # /scores POST
-    # authenticated? = Yes
     def post(self, resp):
-        """add a new score"""
-        post_data = request.get_json()
+        """Add score"""
         response_object = {
             'status': 'fail',
             'message': 'Invalid payload.'
         }
-        #check authorization
-        if not ensure_authenticated(resp):
-            response_object['message'] = \
-                'You do not have permission to do that.'
+        if not resp['admin']:
+            response_object = {
+                'status': 'error',
+                'message': 'You do not have permission to do that.'
+            }
             return response_object, 401
-        #check for valid json body
         post_data = request.get_json()
         if not post_data:
             return response_object, 400
-
-        # init params
-        user_id = post_data.get('user_id')
         exercise_id = post_data.get('exercise_id')
-        correct = post_data.get('correct')
-
-        # do db stuff
+        correct = False
+        if post_data.get('correct'):
+            correct = post_data.get('correct')
         try:
-            db.session.add(Score(
-                user_id=user_id, exercise_id=exercise_id, correct=correct)
+            db.session.add(
+                Score(
+                    user_id=resp['data']['id'],
+                    exercise_id=exercise_id,
+                    correct=correct
+                )
             )
             db.session.commit()
             response_object['status'] = 'success'
@@ -76,6 +75,23 @@ class ScoreList(Resource):
         except (exc.IntegrityError, ValueError):
             db.session.rollback()
             return response_object, 400
+
+
+class ScoresViaUser(Resource):
+
+    method_decorators = {'get': [authenticate_restful]}
+
+    def get(self, resp):
+        """Get all scores by user id"""
+        scores = Score.query.filter_by(user_id=int(resp['data']['id'])).all()
+        response_object = {
+            'status': 'success',
+            'data': {
+                'scores': [score.to_json() for score in scores]
+            }
+        }
+        return response_object, 200
+
 
 class ScoreViaExercise(Resource):
 
@@ -115,6 +131,36 @@ class ScoreViaExercise(Resource):
             db.session().rollback()
             return response_object, 400
 
-api.add_resource(ScoreList, '/scores')
+
+class ScoreViaUser(Resource):
+
+    method_decorators = {'get': [authenticate_restful]}
+
+    def get(self, resp, score_id):
+        """Get single score by user id"""
+        response_object = {
+            'status': 'fail',
+            'message': 'Score does not exist'
+        }
+        try:
+            score = Score.query.filter_by(
+                id=int(score_id),
+                user_id=int(resp['data']['id'])
+            ).first()
+            if not score:
+                return response_object, 404
+            else:
+                response_object = {
+                    'status': 'success',
+                    'data': score.to_json()
+                }
+                return response_object, 200
+        except ValueError:
+            return response_object, 404
+
+
+api.add_resource(ScoresList, '/scores')
+api.add_resource(ScoresViaUser, '/scores/user')
 
 api.add_resource(ScoreViaExercise, '/scores/<exercise_id>')
+api.add_resource(ScoreViaUser, '/scores/user/<score_id>')

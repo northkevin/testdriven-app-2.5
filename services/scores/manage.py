@@ -1,14 +1,13 @@
-# manage.py
+# services/scores/manage.py
 
 
+import os
 import sys
 import unittest
-import os
-import requests
 
+import requests
 import coverage
 from flask.cli import FlaskGroup
-from flask import current_app
 
 from project import create_app, db
 from project.api.models import Score
@@ -26,47 +25,6 @@ COV.start()
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
-
-@cli.command('recreate_db')
-def recreate_db():
-    print("Recreating the database..")
-    db.drop_all()
-    db.create_all()
-    db.session.commit()
-
-@cli.command('seed_db')
-def seed_db():
-    """Seeds the database."""
-    # get exercises
-    url = '{0}/exercises'.format(os.environ.get('EXERCISES_SERVICE_URL'))
-    response = requests.get(url)
-    exercises = response.json()['data']['exercises']
-    # get users
-    url = '{0}/users'.format(os.environ.get('USERS_SERVICE_URL'))
-    response = requests.get(url)
-    users = response.json()['data']['users']
-    # seed
-    for user in users:
-        for exercise in exercises:
-            db.session.add(Score(
-                user_id=user['id'],
-                exercise_id=exercise['id']
-            ))
-    db.session.commit()
-    
-
-@cli.command()
-def debug():
-    """prints debug info"""
-    print("dumping value of 'current_app.config'\n")
-    print(current_app.config)
-    print("\n")
-    print("\ndumping value of 'current_app.config['USERS_SERVICE_URL']'")
-    print(current_app.config['USERS_SERVICE_URL'])
-    print("\n")
-    token = "Authorization: Bearer 123"
-    print("calling ensure_authenticated({0})".format(token))
-    print(ensure_authenticated(token))
 
 
 @cli.command()
@@ -93,6 +51,34 @@ def cov():
         COV.erase()
         return 0
     sys.exit(result)
+
+
+@cli.command('recreate_db')
+def recreate_db():
+    db.drop_all()
+    db.create_all()
+    db.session.commit()
+
+
+@cli.command('seed_db')
+def seed_db():
+    """Seeds the database."""
+    # get exercises
+    url = '{0}/exercises'.format(os.environ.get('EXERCISES_SERVICE_URL'))
+    response = requests.get(url)
+    exercises = response.json()['data']['exercises']
+    # get users
+    url = '{0}/users'.format(os.environ.get('USERS_SERVICE_URL'))
+    response = requests.get(url)
+    users = response.json()['data']['users']
+    # seed
+    for user in users:
+        for exercise in exercises:
+            db.session.add(Score(
+                user_id=user['id'],
+                exercise_id=exercise['id']
+            ))
+    db.session.commit()
 
 
 if __name__ == '__main__':
