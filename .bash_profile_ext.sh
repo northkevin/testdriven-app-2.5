@@ -6,6 +6,9 @@ export REACT_APP_USERS_SERVICE_URL="http://localhost"
 printf "REACT_APP_USERS_SERVICE_URL=${REACT_APP_USERS_SERVICE_URL}"
 export LOAD_BALANCER_STAGE_DNS_NAME=http://testdriven-staging-alb-1218835432.us-east-2.elb.amazonaws.com
 printf "\nLOAD_BALANCER_STAGE_DNS_NAME=${LOAD_BALANCER_STAGE_DNS_NAME}"
+export LOAD_BALANCER_DNS_NAME=http://testdriven-production-alb-1105338052.us-east-2.elb.amazonaws.com
+printf "\LOAD_BALANCER_DNS_NAME=${LOAD_BALANCER_DNS_NAME}"
+
 function swagger-stage()
 {
 	python services/swagger/update-spec.py http://$LOAD_BALANCER_STAGE_DNS_NAME

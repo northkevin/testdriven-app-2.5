@@ -72,7 +72,7 @@ e2e() {
   # open cypress
   ./node_modules/.bin/cypress open \
     --config baseUrl=http://localhost \
-    --env REACT_APP_API_GATEWAY_URL=$REACT_APP_API_GATEWAY_URL,LOAD_BALANCER_STAGE_DNS_NAME=http://localhost
+    --env REACT_APP_API_GATEWAY_URL=$REACT_APP_API_GATEWAY_URL,LOAD_BALANCER_DNS_NAME=http://localhost
   inspect $? e2e
 }
 
