@@ -13,9 +13,9 @@ then
     export REACT_APP_SCORES_SERVICE_URL="http://testdriven-staging-alb-1218835432.us-east-2.elb.amazonaws.com"
   elif [[ "$TRAVIS_BRANCH" == "production" ]]; then
      export DOCKER_ENV=prod
-     export REACT_APP_USERS_SERVICE_URL="http://testdriven-production-alb-1863924933.us-east-2.elb.amazonaws.com"
-     export REACT_APP_EXERCISES_SERVICE_URL="http://testdriven-staging-alb-1218835432.us-east-2.elb.amazonaws.com"
-     export REACT_APP_SCORES_SERVICE_URL="http://testdriven-staging-alb-1218835432.us-east-2.elb.amazonaws.com"
+     export REACT_APP_USERS_SERVICE_URL="http://testdriven-production-alb-1105338052.us-east-2.elb.amazonaws.com"
+     export REACT_APP_EXERCISES_SERVICE_URL="http://testdriven-production-alb-1105338052.us-east-2.elb.amazonaws.com"
+     export REACT_APP_SCORES_SERVICE_URL="http://testdriven-production-alb-1105338052.us-east-2.elb.amazonaws.com"
      export DATABASE_URL="$AWS_RDI_URI"
      export SECRET_KEY="$PRODUCTION_SECRET_KEY"
   fi

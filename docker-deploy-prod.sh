@@ -25,11 +25,10 @@ then
         echo "Revision: $revision"
       else
         echo "Failed to register task definition"
-        return
+        return 1
       fi
     }
 
-    # new
     update_service() {
       if [[ $(aws ecs update-service --cluster $cluster --service $service --task-definition $revision | $JQ '.service.taskDefinition') != $revision ]]; then
         echo "Error updating service."
@@ -37,39 +36,39 @@ then
       fi
     }
 
-    deploy_cluster() {
 
-      cluster="test-driven-production-cluster" # new
-
-      # users
-      service="testdriven-users-prod-service"  # new
-      template="ecs_users_prod_taskdefinition.json"
-      task_template=$(cat "ecs/$template")
-      task_def=$(printf "$task_template" $AWS_ACCOUNT_ID $AWS_RDS_URI $PRODUCTION_SECRET_KEY)
-      echo "$task_def"
-      register_definition
-      update_service
+    debug_print_status(){
       status=$?
       if ! $(exit $status); then
         echo "users deployment failed."
         echo "status: $status"
         echo "dumping current value of template: $template"
       fi
+    }
+
+    deploy_cluster() {
+
+      cluster="test-driven-production-cluster"
+
+      # users
+      service="testdriven-users-prod-service"
+      template="ecs_users_prod_taskdefinition.json"
+      task_template=$(cat "ecs/$template")
+      task_def=$(printf "$task_template" $AWS_ACCOUNT_ID $AWS_RDS_URI $PRODUCTION_SECRET_KEY)
+      echo "$task_def"
+      register_definition
+      update_service
+      # debug_print_status
 
       # client
-      service="testdriven-client-prod-service"  # new
+      service="testdriven-client-prod-service"
       template="ecs_client_prod_taskdefinition.json"
       task_template=$(cat "ecs/$template")
       task_def=$(printf "$task_template" $AWS_ACCOUNT_ID)
       echo "$task_def"
       register_definition
       update_service
-      status=$?
-      if ! $(exit $status); then
-        echo "client deployment failed."
-        echo "status: $status"
-        echo "dumping current value of template: $template"
-      fi
+      # debug_print_status
 
       # swagger
       service="testdriven-swagger-prod-service"
@@ -79,12 +78,27 @@ then
       echo "$task_def"
       register_definition
       update_service
-      status=$?
-      if ! $(exit $status); then
-        echo "swagger deployment failed."
-        echo "status: $status"
-        echo "dumping current value of template: $template"
-      fi
+      # debug_print_status
+
+      # exercises
+      service="testdriven-exercises-prod-service"
+      template="ecs_exercises_prod_taskdefinition.json"
+      task_template=$(cat "ecs/$template")
+      task_def=$(printf "$task_template" $AWS_ACCOUNT_ID $AWS_RDS_EXERCISES_URI)
+      echo "$task_def"
+      register_definition
+      update_service
+      # debug_print_status
+
+      # scores
+      service="testdriven-scores-prod-service"
+      template="ecs_scores_prod_taskdefinition.json"
+      task_template=$(cat "ecs/$template")
+      task_def=$(printf "$task_template" $AWS_ACCOUNT_ID $AWS_RDS_SCORES_URI)
+      echo "$task_def"
+      register_definition
+      update_service
+      # debug_print_status
 
     }
 
