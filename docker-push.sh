@@ -10,9 +10,12 @@ then
     export DOCKER_ENV=stage
     export REACT_APP_USERS_SERVICE_URL="http://testdriven-staging-alb-1218835432.us-east-2.elb.amazonaws.com"
     export REACT_APP_EXERCISES_SERVICE_URL="http://testdriven-staging-alb-1218835432.us-east-2.elb.amazonaws.com"
+    export REACT_APP_SCORES_SERVICE_URL="http://testdriven-staging-alb-1218835432.us-east-2.elb.amazonaws.com"
   elif [[ "$TRAVIS_BRANCH" == "production" ]]; then
      export DOCKER_ENV=prod
      export REACT_APP_USERS_SERVICE_URL="http://testdriven-production-alb-1863924933.us-east-2.elb.amazonaws.com"
+     export REACT_APP_EXERCISES_SERVICE_URL="http://testdriven-staging-alb-1218835432.us-east-2.elb.amazonaws.com"
+     export REACT_APP_SCORES_SERVICE_URL="http://testdriven-staging-alb-1218835432.us-east-2.elb.amazonaws.com"
      export DATABASE_URL="$AWS_RDI_URI"
      export SECRET_KEY="$PRODUCTION_SECRET_KEY"
   fi
@@ -50,12 +53,22 @@ then
     docker tag $SWAGGER:$COMMIT $REPO/$SWAGGER:$TAG
     docker push $REPO/$SWAGGER:$TAG
     # exercises
-    docker build $EXERCISES_REPO -t $EXERCISES:$COMMIT -f Dockerfile-$DOCKER_ENV  # new
-    docker tag $EXERCISES:$COMMIT $REPO/$EXERCISES:$TAG  # new
-    docker push $REPO/$EXERCISES:$TAG  # new
+    docker build $EXERCISES_REPO -t $EXERCISES:$COMMIT -f Dockerfile-$DOCKER_ENV
+    docker tag $EXERCISES:$COMMIT $REPO/$EXERCISES:$TAG
+    docker push $REPO/$EXERCISES:$TAG
     # exercises db
-    docker build $EXERCISES_DB_REPO -t $EXERCISES_DB:$COMMIT -f Dockerfile  # new
-    docker tag $EXERCISES_DB:$COMMIT $REPO/$EXERCISES_DB:$TAG  # new
-    docker push $REPO/$EXERCISES_DB:$TAG  # new
+    docker build $EXERCISES_DB_REPO -t $EXERCISES_DB:$COMMIT -f Dockerfile
+    docker tag $EXERCISES_DB:$COMMIT $REPO/$EXERCISES_DB:$TAG
+    docker push $REPO/$EXERCISES_DB:$TAG
+    # scores
+    # new
+    docker build $SCORES_REPO -t $SCORES:$COMMIT -f Dockerfile-$DOCKER_ENV
+    docker tag $SCORES:$COMMIT $REPO/$SCORES:$TAG
+    docker push $REPO/$SCORES:$TAG
+    # scores db
+    # new
+    docker build $SCORES_DB_REPO -t $SCORES_DB:$COMMIT -f Dockerfile
+    docker tag $SCORES_DB:$COMMIT $REPO/$SCORES_DB:$TAG
+    docker push $REPO/$SCORES_DB:$TAG
   fi
 fi

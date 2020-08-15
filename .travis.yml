@@ -28,6 +28,10 @@ env:
   EXERCISES_REPO: ${MAIN_REPO}#${TRAVIS_BRANCH}:services/exercises
   EXERCISES_DB: test-driven-exercises_db
   EXERCISES_DB_REPO: ${MAIN_REPO}#${TRAVIS_BRANCH}:services/exercises/project/db
+  SCORES: test-driven-scores # new
+  SCORES_REPO: ${MAIN_REPO}#${TRAVIS_BRANCH}:services/scores # new
+  SCORES_DB: test-driven-scores_db # new
+  SCORES_DB_REPO: ${MAIN_REPO}#${TRAVIS_BRANCH}:services/scores/project/db # new
   SECRET_KEY: my_precious
 
 before_install:
@@ -39,6 +43,7 @@ before_install:
 before_script:
   - export REACT_APP_USERS_SERVICE_URL=http://127.0.0.1
   - export REACT_APP_EXERCISES_SERVICE_URL=http://127.0.0.1
+  - export REACT_APP_SCORES_SERVICE_URL=http://127.0.0.1
   - export REACT_APP_API_GATEWAY_URL=https://p8xqn5cer1.execute-api.us-east-2.amazonaws.com/v1/execute
   - export LOAD_BALANCER_STAGE_DNS_NAME=http://testdriven-staging-alb-1218835432.us-east-2.elb.amazonaws.com
   - npm install
