@@ -53,7 +53,6 @@ then
       task_template=$(cat "ecs/$template")
       task_def=$(printf "$task_template" $AWS_ACCOUNT_ID $AWS_ACCOUNT_ID)
       echo "$task_def"
-
       register_definition
       status=$?
       if ! $(exit $status); then
@@ -61,7 +60,6 @@ then
         echo "dumping current value of template: $template"
         return
       fi
-
       update_service
       status=$?
       if ! $(exit $status); then
@@ -77,14 +75,12 @@ then
       task_template=$(cat "ecs/$template")
       task_def=$(printf "$task_template" $AWS_ACCOUNT_ID)
       echo "$task_def"
-
       register_definition
       status=$?
       if ! $(exit $status); then
         echo "register_definition failed."
         echo "dumping current value of template: $template"
       fi
-
       update_service
       status=$?
       if ! $(exit $status); then
@@ -98,14 +94,12 @@ then
       task_template=$(cat "ecs/$template")
       task_def=$(printf "$task_template" $AWS_ACCOUNT_ID)
       echo "$task_def"
-
       register_definition
       status=$?
       if ! $(exit $status); then
         echo "register_definition failed."
         echo "dumping current value of template: $template"
       fi
-
       update_service
       status=$?
       if ! $(exit $status); then
@@ -119,13 +113,11 @@ then
       task_template=$(cat "ecs/$template")
       task_def=$(printf "$task_template" $AWS_ACCOUNT_ID $AWS_ACCOUNT_ID)
       echo "$task_def"
-
       register_definition
       if ! $(exit $status); then
         echo "register_definition failed."
         echo "dumping current value of template: $template"
       fi
-
       update_service
       status=$?
       if ! $(exit $status); then
@@ -140,8 +132,16 @@ then
       task_def=$(printf "$task_template" $AWS_ACCOUNT_ID $AWS_ACCOUNT_ID)
       echo "$task_def"
       register_definition
-
-
+      if ! $(exit $status); then
+        echo "register_definition failed."
+        echo "dumping current value of template: $template"
+      fi
+      update_service
+      status=$?
+      if ! $(exit $status); then
+        echo "register_definition failed."
+        echo "dumping current value of template: $template"
+      fi
     }
 
     configure_aws_cli
