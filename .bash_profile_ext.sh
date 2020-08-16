@@ -9,6 +9,13 @@ printf "\nLOAD_BALANCER_STAGE_DNS_NAME=${LOAD_BALANCER_STAGE_DNS_NAME}"
 export LOAD_BALANCER_DNS_NAME=http://testdriven-production-alb-1105338052.us-east-2.elb.amazonaws.com
 printf "\LOAD_BALANCER_DNS_NAME=${LOAD_BALANCER_DNS_NAME}"
 
+function init-e2e(){
+	export REACT_APP_API_GATEWAY_URL=https://p8xqn5cer1.execute-api.us-east-2.amazonaws.com/v1/execute
+	export REACT_APP_USERS_SERVICE_URL=http://localhost
+	export REACT_APP_EXERCISES_SERVICE_URL=http://localhost
+  export REACT_APP_SCORES_SERVICE_URL=http://localhost
+}
+
 function swagger-stage()
 {
 	python services/swagger/update-spec.py http://$LOAD_BALANCER_STAGE_DNS_NAME
