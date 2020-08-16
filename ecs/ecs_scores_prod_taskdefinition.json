@@ -38,7 +38,7 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "testdriven-scores-prod",
-          "awslogs-region": "us-west-1"
+          "awslogs-region": "us-east-2"
         }
       }
     }
